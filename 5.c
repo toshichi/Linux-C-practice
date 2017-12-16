@@ -1,15 +1,19 @@
 #include <stdio.h>
 #include <signal.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
-typedef void (*sighandler_t) (int);
-
-sighandler_t sb;
-sighandler_t sig(int signum){
-	printf("PID:%d, %d received", getpid(), signum);
+void sig(int signum){
+	printf("\nPID:%d, %d received\n", getpid(), signum);
 }
 
 int main (){
-	fork();
-	signal(SIGINT, sig);
+	if (fork()){
+		signal(SIGINT, sig);
+		wait(0);
+	}
+	else {
+		while(1);
+	}
 	return 0;
 }

@@ -10,32 +10,40 @@ sem_t sem1;
 sem_t sem2;
 
 void read1() {
+	// open file
 	FILE *fp = fopen("./7-1.txt", "r");
+	// read all content
 	int i = 0;
 	while(!feof(fp)) {
 		fscanf(fp, "%d", &cache1[i]);
 		printf("[1]wrote, %d\n", cache1[i]);
+		// every line send a signal
 		sem_post(&sem1);
 		i++;
 	}
 
-	cache1[i] = -1;//end mark
+	cache1[i] = -1;	// end mark
 	printf("[1]write finished\n");
+	// send end mark
 	sem_post(&sem1);
 	return;
 }
 
 void read2() {
+	// open file
 	FILE *fp = fopen("./7-2.txt", "r");
+	// read all content
 	int i = 0;
 	while(!feof(fp)) {
 		fscanf(fp, "%d", &cache2[i]);
 		printf("[2]wrote, %d\n", cache2[i]);
+		// every line send a signal
 		sem_post(&sem2);
 		i++;
 	}
-	cache2[i] = -1;//end mark
+	cache2[i] = -1;	// end mark
 	printf("[2]write finished\n");
+	// send end mark
 	sem_post(&sem2);
 	return;
 }
@@ -45,9 +53,10 @@ void calc1() {
 	int i = 0;
 	int sum = 0;
 	while (1) {
+		// wait for reading permission
 		sem_wait(&sem1);
-		if (cache1[i] == -1) break;//end mark
-		sum+=cache1[i];
+		if (cache1[i] == -1) break;	// end mark
+		sum+=cache1[i];	// calculate sum
 		printf("[1]readed: %d\n", cache1[i]);
 		i++;
 	}
@@ -59,9 +68,10 @@ void calc2() {
 	int i = 0;
 	int quad = 1;
 	while (1) {
+		// wait for reading permission
 		sem_wait(&sem2);
-		if (cache2[i] == -1) break;//end mark
-		quad*=cache2[i];
+		if (cache2[i] == -1) break;	// end mark
+		quad*=cache2[i];	// calculate quadrature
 		printf("[2]readed: %d\n", cache2[i]);
 		i++;
 	}

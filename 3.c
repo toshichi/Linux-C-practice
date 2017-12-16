@@ -5,37 +5,36 @@
 #include <sys/wait.h>
 
 int main() {
-	char buf[1000];
-	char* cmd[100];
-    // const char *d = " ";
-    fgets(buf ,1000, stdin) != NULL;
-    int count = 0;
-    const char d = ' ';
-    char *p;
+    char buf[1000]; // reading buffer
+    char* cmd[100]; // command to exec via 'execvp'
+    int count = 0;  // command spliting counter
+    const char d = ' '; // command splitter
+    char *p;    // splitted string pointer
+    // read command
+    fgets(buf ,1000, stdin);
+    
+    // split command and arguments
     p = strtok(buf, &d);
     while(p) {
-    	cmd[count] = p;
-    	count++;
+        cmd[count] = p;
+        count++;
         p = strtok(NULL, &d);
     }
+    // add NULL at the end of command
     if (cmd[count - 1] == "\n")
-    	cmd[count - 1] = NULL;
+        cmd[count - 1] = NULL;
     else
-    	cmd[count] = NULL;
-    // cmd[count] = (cmd[count] == "\n"NULL;
-
-    for (int i=0;i<count ;i++){
-    	printf ("%s\n", cmd[i]);
-    }
+        cmd[count] = NULL;
 
     if(fork()==0){
-    	execvp(cmd[0], cmd);
-    	// execle
+        // use sub process to execute
+        execvp(cmd[0], cmd);
     }
     else {
-    	int ret;
-    	wait(&ret);
-    	printf("returned %d\n", ret);
+        // display return code
+        int ret;
+        wait(&ret);
+        printf("returned %d\n", ret);
     }
     return 0;
 }
